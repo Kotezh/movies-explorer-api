@@ -1,33 +1,38 @@
-const express = require('express');
+// const express = require('express');
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const users = require('./users');
 const movies = require('./movies');
-const { createUser, login, logOut } = require('../controllers/users');
+const { createUser, login } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/not-found-err');
 
-const app = express();
+// const app = express();
 
-app.post('/signin', celebrate({
+router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required(),
     password: Joi.string().required(),
   }),
 }), login);
-app.post('/signout', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required(),
-    password: Joi.string().required(),
-  }),
-}), logOut);
-app.post('/signup', celebrate({
+// router.post('/signout', celebrate({
+//   body: Joi.object().keys({
+//     email: Joi.string().required(),
+//     password: Joi.string().required(),
+//   }),
+// }), logOut);
+router.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required(),
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
   }),
 }), createUser);
-app.use(auth);
-app.use('/', users);
-app.use('/', movies);
-app.use('/', () => { throw new NotFoundError('Данные не найдены'); });
+router.use(auth);
+router.use('/', users);
+router.use('/', movies);
+router.use('/*', (req, res, next) => {
+  next(new NotFoundError('Данные не найдены'));
+});
+
+module.exports = router;

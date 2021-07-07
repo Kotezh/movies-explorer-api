@@ -34,24 +34,24 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.logOut = (req, res, next) => {
-  const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: '7d' });
-      res
-        .clearCookie('jwt', token, {
-          maxAge: 604800000,
-          httpOnly: true,
-        });
-      req.session.destroy(() => { res.redirect('/'); });
-    })
-    .catch(() => {
-      throw new DataError('Неправильные почта или пароль');
-    })
-    .catch(next);
-};
+// module.exports.logOut = (req, res, next) => {
+//   const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
+//   const { email, password } = req.body;
+//   return User.findUserByCredentials(email, password)
+//     .then((user) => {
+//       const token = jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: '7d' });
+//       res
+//         .clearCookie('jwt', token, {
+//           maxAge: 604800000,
+//           httpOnly: true,
+//         });
+//       req.session.destroy(() => { res.redirect('/'); });
+//     })
+//     .catch(() => {
+//       throw new DataError('Неправильные почта или пароль');
+//     })
+//     .catch(next);
+// };
 
 module.exports.getUserMe = (req, res, next) => {
   const userId = req.user._id;
