@@ -20,22 +20,23 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
   useUnifiedTopology: true,
 });
 
-const options = {
-  origin: [
-    'http://kotezh.diploma.nomoredomains.monster',
-    'https://kotezh.diploma.nomoredomains.monster',
-    'http://localhost:3000',
-    'http://130.193.55.107',
-    'https://130.193.55.107',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-  credentials: true,
-};
+// const options = {
+//   origin: [
+//     'http://kotezh.diploma.nomoredomains.monster',
+//     'https://kotezh.diploma.nomoredomains.monster',
+//     'http://localhost:3000',
+//     'http://130.193.55.107',
+//     'https://130.193.55.107',
+//   ],
+//   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+//   preflightContinue: false,
+//   optionsSuccessStatus: 204,
+//   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
+//   credentials: true,
+// };
 
-app.use('*', cors(options));
+// app.use('*', cors(options));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(requestLogger);
