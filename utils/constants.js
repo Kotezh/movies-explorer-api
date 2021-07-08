@@ -6,6 +6,7 @@ const USER_EXISTS_ERROR_TEXT = 'Пользователь уже существу
 const MOVIE_NOT_FOUND_ERROR_TEXT = 'Фильм не найден';
 const RIGHTS_ERROR_TEXT = 'Недостаточно прав для выполнения действия';
 const DATA_NOT_FOUND_ERROR_TEXT = 'Данные не найдены';
+const LIMITER_TEXT = 'Слишком много запросов, пожалуйста, попробуйте еще раз позднее';
 
 module.exports = {
   INTERNAL_SERVER_ERROR_TEXT,
@@ -16,4 +17,5 @@ module.exports = {
   MOVIE_NOT_FOUND_ERROR_TEXT,
   RIGHTS_ERROR_TEXT,
   DATA_NOT_FOUND_ERROR_TEXT,
+  LIMITER_TEXT,
 };
