@@ -1,64 +1,31 @@
 const express = require('express');
 
-require('dotenv').config();
-
-const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { mainHandlerError } = require('./middlewares/mainHandlerError');
 const indexRouter = require('./routes/index');
+const {
+  PORT, MONGO_DB, MONGO_OPTIONS, CORS_OPTIONS,
+} = require('./utils/config');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-});
+mongoose.connect(MONGO_DB, MONGO_OPTIONS);
 
-const options = {
-  origin: [
-    'http://kotezh.diploma.nomoredomains.monster',
-    'https://kotezh.diploma.nomoredomains.monster',
-    'http://localhost:3000',
-    'http://130.193.55.107',
-    'https://130.193.55.107',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-  credentials: true,
-};
-
-app.use('*', cors(options));
-// app.use(cors());
+app.use('*', cors(CORS_OPTIONS));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(requestLogger);
 
-// app.get('/crash-test', () => {
-//   setTimeout(() => {
-//     throw new Error('Сервер сейчас упадёт');
-//   }, 0);
-// });
-
 app.use(indexRouter);
 
 app.use(errorLogger);
-app.use(errors()); // обработчик ошибок celebrate
+app.use(errors());
+app.use(mainHandlerError);
 
-// централизованный обработчик ошибок
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-});
 app.listen(PORT);

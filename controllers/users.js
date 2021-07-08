@@ -1,26 +1,25 @@
 require('dotenv').config();
 
-const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { JWT_SECRET_USED } = require('../utils/config');
+const {
+  DATA_ERROR_TEXT,
+  REQUEST_ERROR_TEXT,
+  USER_NOT_FOUND_ERROR_TEXT,
+  USER_EXISTS_ERROR_TEXT,
+} = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-err');
 const MongoError = require('../errors/mongo-err');
 const RequestError = require('../errors/request-err');
 const DataError = require('../errors/data-err');
 
-// module.exports.getUsers = (req, res, next) => {
-//   User.find({})
-//     .then((users) => res.status(200).send({ data: users }))
-//     .catch(next);
-// };
-
 module.exports.login = (req, res, next) => {
-  const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET_USED, { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           maxAge: 604800000,
@@ -29,29 +28,28 @@ module.exports.login = (req, res, next) => {
         .send({ token: 'ok' });
     })
     .catch(() => {
-      throw new DataError('Неправильные почта или пароль');
+      throw new DataError(DATA_ERROR_TEXT);
     })
     .catch(next);
 };
 
-// module.exports.logOut = (req, res, next) => {
-//   const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
-//   const { email, password } = req.body;
-//   return User.findUserByCredentials(email, password)
-//     .then((user) => {
-//       const token = jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: '7d' });
-//       res
-//         .clearCookie('jwt', token, {
-//           maxAge: 604800000,
-//           httpOnly: true,
-//         });
-//       req.session.destroy(() => { res.redirect('/'); });
-//     })
-//     .catch(() => {
-//       throw new DataError('Неправильные почта или пароль');
-//     })
-//     .catch(next);
-// };
+module.exports.logout = (req, res, next) => {
+  const userId = req.user._id;
+  return User.findById(userId)
+    .then(() => {
+      res
+        .cookie('jwt', '', {
+          expires: new Date(2000, 1, 1),
+          httpOnly: true,
+        })
+        .send({ logout: 'ok' });
+      req.session.destroy(() => { res.redirect('/'); });
+    })
+    .catch(() => {
+      throw new DataError(DATA_ERROR_TEXT);
+    })
+    .catch(next);
+};
 
 module.exports.getUserMe = (req, res, next) => {
   const userId = req.user._id;
@@ -64,10 +62,10 @@ module.exports.getUserMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new RequestError('Переданы некорректные данные');
+        throw new RequestError(REQUEST_ERROR_TEXT);
       }
       if (err.message === 'PageNotFound') {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
     })
     .catch(next);
@@ -90,10 +88,10 @@ module.exports.updateUserMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Переданы некорректные данные');
+        throw new RequestError(REQUEST_ERROR_TEXT);
       }
       if (err.message === 'PageNotFound') {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
     })
     .catch(next);
@@ -109,55 +107,12 @@ module.exports.createUser = (req, res, next) => {
     })
       .catch((err) => {
         if (err.name === 'MongoError' && err.code === 11000) {
-          throw new MongoError('Пользователь уже существует');
+          throw new MongoError(USER_EXISTS_ERROR_TEXT);
         }
         if (err.name === 'CastError') {
-          throw new RequestError('Переданы некорректные данные');
+          throw new RequestError(REQUEST_ERROR_TEXT);
         }
       }))
     .then((user) => res.status(201).send({ email: user.email, id: user._id }))
     .catch(next);
 };
-
-// module.exports.getUser = (req, res, next) => {
-//   const { userId } = req.params;
-//   return User.findById(userId)
-//     .then((user) => {
-//       if (!user) {
-//         throw new Error('PageNotFound');
-//       }
-//       res.status(200).send({ data: user });
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         throw new RequestError('Переданы некорректные данные');
-//       }
-//       if (err.message === 'PageNotFound') {
-//         throw new NotFoundError('Пользователь не найден');
-//       }
-//     })
-//     .catch(next);
-// };
-
-// module.exports.updateAvatar = (req, res, next) => {
-//   User.findByIdAndUpdate(
-//     req.user._id,
-//     { avatar: req.body.avatar },
-//     { new: true, runValidators: true },
-//   )
-//     .then((user) => {
-//       if (!user) {
-//         throw new Error('PageNotFound');
-//       }
-//       res.status(200).send({ data: user });
-//     })
-//     .catch((err) => {
-//       if (err.name === 'ValidationError') {
-//         throw new RequestError('Переданы некорректные данные');
-//       }
-//       if (err.message === 'PageNotFound') {
-//         throw new NotFoundError('Пользователь не найден');
-//       }
-//     })
-//     .catch(next);
-// };

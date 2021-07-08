@@ -1,17 +1,17 @@
 require('dotenv').config();
 
-const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET_USED } = require('../utils/config');
+const { DATA_ERROR_TEXT } = require('../utils/constants');
 const DataError = require('../errors/data-err');
 
 module.exports = (req, res, next) => {
-  const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
   const token = req.cookies.jwt;
   let payload;
   try {
-    payload = jwt.verify(token, jwtSecret);
+    payload = jwt.verify(token, JWT_SECRET_USED);
   } catch (err) {
-    throw new DataError('Неправильные почта или пароль');
+    throw new DataError(DATA_ERROR_TEXT);
   }
   req.user = payload;
   next();
