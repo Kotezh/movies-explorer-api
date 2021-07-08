@@ -3,13 +3,13 @@ const NotFoundError = require('../errors/not-found-err');
 const RequestError = require('../errors/request-err');
 const NotOwnerError = require('../errors/owner-err');
 
-// module.exports.getMovies = (req, res, next) => {
-//   Card.find({})
-//     .populate('likes')
-//     .populate('owner')
-//     .then((movies) => res.status(200).send({ data: movies }))
-//     .catch(next);
-// };
+module.exports.getMovies = (req, res, next) => {
+  Movie.find({})
+    // .populate('likes')
+    // .populate('owner')
+    .then((movies) => res.status(200).send({ data: movies }))
+    .catch(next);
+};
 
 module.exports.createMovie = (req, res, next) => {
   // const { name, link } = req.body;

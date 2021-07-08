@@ -9,11 +9,11 @@ const MongoError = require('../errors/mongo-err');
 const RequestError = require('../errors/request-err');
 const DataError = require('../errors/data-err');
 
-module.exports.getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.status(200).send({ data: users }))
-    .catch(next);
-};
+// module.exports.getUsers = (req, res, next) => {
+//   User.find({})
+//     .then((users) => res.status(200).send({ data: users }))
+//     .catch(next);
+// };
 
 module.exports.login = (req, res, next) => {
   const jwtSecret = NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key';
@@ -115,7 +115,7 @@ module.exports.createUser = (req, res, next) => {
           throw new RequestError('Переданы некорректные данные');
         }
       }))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(201).send({ email: user.email, id: user._id }))
     .catch(next);
 };
 

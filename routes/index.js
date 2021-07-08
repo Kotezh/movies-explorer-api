@@ -31,7 +31,7 @@ router.post('/signup', celebrate({
 router.use(auth);
 router.use('/', users);
 router.use('/', movies);
-router.use('/*', (req, res, next) => {
+router.use('/', (req, res, next) => {
   next(new NotFoundError('Данные не найдены'));
 });
 

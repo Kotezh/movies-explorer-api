@@ -37,6 +37,7 @@ const options = {
 
 app.use('*', cors(options));
 // app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(requestLogger);
@@ -46,7 +47,9 @@ app.use(requestLogger);
 //     throw new Error('Сервер сейчас упадёт');
 //   }, 0);
 // });
+
 app.use(indexRouter);
+
 app.use(errorLogger);
 app.use(errors()); // обработчик ошибок celebrate
 
