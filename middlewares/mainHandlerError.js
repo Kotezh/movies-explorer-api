@@ -1,4 +1,3 @@
-// централизованный обработчик ошибок
 const { INTERNAL_SERVER_ERROR_TEXT } = require('../utils/constants');
 
 module.exports.mainHandlerError = (err, req, res, next) => {
