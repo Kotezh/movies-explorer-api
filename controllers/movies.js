@@ -42,8 +42,9 @@ module.exports.deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new NotOwnerError(RIGHTS_ERROR_TEXT);
       }
-      movie.remove();
+      movie.remove()
+        .then(() => res.send({ data: movie }))
+        .catch((err) => { throw err; });
     })
-    .then((movie) => res.send({ message: movie }))
     .catch(next);
 };

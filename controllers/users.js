@@ -56,16 +56,13 @@ module.exports.getUserMe = (req, res, next) => {
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new Error('PageNotFound');
+        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new RequestError(REQUEST_ERROR_TEXT);
-      }
-      if (err.message === 'PageNotFound') {
-        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
       throw err;
     })
@@ -83,7 +80,6 @@ module.exports.updateUserMe = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // throw new Error('PageNotFound');
         throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
       res.send({ data: user });
@@ -92,9 +88,6 @@ module.exports.updateUserMe = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new RequestError(REQUEST_ERROR_TEXT);
       }
-      // if (err.message === 'PageNotFound') {
-      //   throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
-      // }
       if (err.name === 'MongoError' && err.code === 11000) {
         throw new MongoError(USER_EXISTS_ERROR_TEXT);
       }
