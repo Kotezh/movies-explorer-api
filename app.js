@@ -9,7 +9,7 @@ const helmet = require('helmet');
 const rateLimiter = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { mainHandlerError } = require('./middlewares/mainHandlerError');
-const indexRouter = require('./routes/index');
+const router = require('./routes');
 const {
   PORT, MONGO_DB, MONGO_OPTIONS, CORS_OPTIONS,
 } = require('./utils/config');
@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(helmet());
 app.use(rateLimiter);
-app.use(indexRouter);
+app.use(router);
 
 app.use(errorLogger);
 app.use(errors());

@@ -58,7 +58,7 @@ module.exports.getUserMe = (req, res, next) => {
       if (!user) {
         throw new Error('PageNotFound');
       }
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -67,6 +67,7 @@ module.exports.getUserMe = (req, res, next) => {
       if (err.message === 'PageNotFound') {
         throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -82,17 +83,22 @@ module.exports.updateUserMe = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new Error('PageNotFound');
+        // throw new Error('PageNotFound');
+        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
       }
-      res.status(200).send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new RequestError(REQUEST_ERROR_TEXT);
       }
-      if (err.message === 'PageNotFound') {
-        throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
+      // if (err.message === 'PageNotFound') {
+      //   throw new NotFoundError(USER_NOT_FOUND_ERROR_TEXT);
+      // }
+      if (err.name === 'MongoError' && err.code === 11000) {
+        throw new MongoError(USER_EXISTS_ERROR_TEXT);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -112,6 +118,7 @@ module.exports.createUser = (req, res, next) => {
         if (err.name === 'CastError') {
           throw new RequestError(REQUEST_ERROR_TEXT);
         }
+        throw err;
       }))
     .then((user) => res.status(201).send({ email: user.email, id: user._id }))
     .catch(next);

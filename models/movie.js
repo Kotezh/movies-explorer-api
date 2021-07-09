@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
+const { URL_ERROR_TEXT } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -25,24 +27,24 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^https?:\/\/(www)?[-.~:/?#[\]@!$&'()*+,;=\w]+#?/.test(v),
-      message: (link) => `${link.value} - некорректная ссылка`,
+      validator: (v) => { validator.isURL(v); },
+      message: (link) => `${link.value} - ${URL_ERROR_TEXT}`,
     },
   },
   trailer: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^https?:\/\/(www)?[-.~:/?#[\]@!$&'()*+,;=\w]+#?/.test(v),
-      message: (link) => `${link.value} - некорректная ссылка`,
+      validator: (v) => { validator.isURL(v); },
+      message: (link) => `${link.value} - ${URL_ERROR_TEXT}`,
     },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^https?:\/\/(www)?[-.~:/?#[\]@!$&'()*+,;=\w]+#?/.test(v),
-      message: (link) => `${link.value} - некорректная ссылка`,
+      validator: (v) => { validator.isURL(v); },
+      message: (link) => `${link.value} - ${URL_ERROR_TEXT}`,
     },
   },
   owner: {
@@ -51,7 +53,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
   },
   movieId: {
-    type: String,
+    type: Number,
     required: true,
   },
   nameRU: {

@@ -10,7 +10,7 @@ const NotOwnerError = require('../errors/owner-err');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
-    .then((movies) => res.status(200).send({ data: movies }))
+    .then((movies) => res.send({ data: movies }))
     .catch(next);
 };
 
@@ -25,6 +25,7 @@ module.exports.createMovie = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new RequestError(REQUEST_ERROR_TEXT);
       }
+      throw err;
     })
     .catch(next);
 };
@@ -35,12 +36,14 @@ module.exports.deleteMovie = (req, res, next) => {
       if (!movie) {
         throw new NotFoundError(MOVIE_NOT_FOUND_ERROR_TEXT);
       }
+      return movie;
+    })
+    .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new NotOwnerError(RIGHTS_ERROR_TEXT);
       }
-      Movie.findByIdAndRemove(req.params.movieId)
-        .then(() => res.status(200).send({ data: movie }))
-        .catch(next);
+      movie.remove();
     })
+    .then((movie) => res.send({ message: movie }))
     .catch(next);
 };
