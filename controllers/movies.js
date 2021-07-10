@@ -44,7 +44,7 @@ module.exports.deleteMovie = (req, res, next) => {
       }
       movie.remove()
         .then(() => res.send({ data: movie }))
-        .catch((err) => { throw err; });
+        .catch(next);
     })
     .catch(next);
 };

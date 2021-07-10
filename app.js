@@ -18,13 +18,13 @@ const app = express();
 
 mongoose.connect(MONGO_DB, MONGO_OPTIONS);
 
+app.use(requestLogger);
+app.use(rateLimiter);
+app.use(helmet());
 app.use('*', cors(CORS_OPTIONS));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(requestLogger);
-app.use(helmet());
-app.use(rateLimiter);
 app.use(router);
 
 app.use(errorLogger);
