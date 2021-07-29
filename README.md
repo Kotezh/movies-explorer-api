@@ -22,7 +22,7 @@ https://api.kotezh.diploma.nomoredomains.monster/
 
 * Запустить проект
 
-  `npm start` или `npm run dev`
+  `pm2 start app`
 
 * Порт для просмотра результатов в браузере
 
