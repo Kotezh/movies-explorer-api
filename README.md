@@ -17,12 +17,11 @@ https://api.kotezh.diploma.nomoredomains.monster/
 
 * Установить зависимости
 
-  `cd movies-explorer-api`
   `npm install`
 
 * Запустить проект
 
-  `pm2 start app`
+  `npm start` или `npm run dev` (с hot-reload)
 
 * Порт для просмотра результатов в браузере
 
