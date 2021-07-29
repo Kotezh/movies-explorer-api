@@ -21,8 +21,8 @@ https://api.kotezh.diploma.nomoredomains.monster/
 
 * Запустить проект
 
-  `npm start` или `npm run dev` (с hot-reload)
+  `npm start`
 
-* Порт для просмотра результатов в браузере
+* Посмотреть результат
 
   `http://localhost:3000`
