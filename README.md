@@ -3,6 +3,9 @@
 ## Полное описание проекта в репозитории 
 https://github.com/Kotezh/movies-explorer-frontend
 
+## Стек
+  `JavaScript` `Express` `Node.js` `Git`
+
 ## Ссылка на проект
 https://api.kotezh.diploma.nomoredomains.monster/
 
