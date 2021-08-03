@@ -4,10 +4,9 @@
     "no-underscore-dangle": [
       1,
       {
-        "allow": [
-          "_id"
-        ]
+        "allow": ["_id"]
       }
     ]
+    // "linebreak-style": ["error", "windows"]
   }
 }
